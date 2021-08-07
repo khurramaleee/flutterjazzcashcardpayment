@@ -31,10 +31,11 @@ public class MainActivity extends FlutterActivity {
                                 else {
                                     result.success("Nay");
                                 }
-//                                Intent i = new Intent(MainActivity.this, testingactivity.class);
-//                                i.putExtra("data", arguments);
-//
-//                                startActivityForResult(i, 0);
+                                Intent i = new Intent(MainActivity.this, PaymentActivity.class);
+                                //startActivity(new Intent(MainActivity.this, PaymentActivity.class));
+                                i.putExtra("price", arguments);
+
+                                startActivityForResult(i, 0);
                             }
                         }
                 );

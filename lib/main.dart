@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void Printy() async {
-    double val =350;
+    double val =300000;
 
     String value="";
 
