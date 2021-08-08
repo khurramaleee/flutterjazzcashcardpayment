@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Base64;
+
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -13,10 +13,9 @@ import android.webkit.WebViewClient;
 
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
+
 import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,17 +28,22 @@ public class PaymentActivity extends AppCompatActivity {
     String postData = "";
     private WebView mWebView;
 
-    private final String Jazz_MerchantID      = "MC12686";
-    private final String Jazz_Password        = "5z932w9sa5";
-    private final String Jazz_IntegritySalt   = "v3s3y665vf";
-
-    private static final String paymentReturnUrl="https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/DoTransaction";
+    private  String Jazz_MerchantID      = "";
+    private  String Jazz_Password        = "";
+    private  String Jazz_IntegritySalt   = "";
+    private String price="";
+    private   String paymentReturnUrl="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
-
+        Intent intentData = getIntent();
+        price = intentData.getStringExtra("price");
+        Jazz_MerchantID = intentData.getStringExtra("Jazz_MerchantID");
+        Jazz_Password = intentData.getStringExtra("Jazz_Password");
+        Jazz_IntegritySalt = intentData.getStringExtra("Jazz_IntegritySalt");
+        paymentReturnUrl = intentData.getStringExtra("paymentReturnUrl");
         mWebView = (WebView) findViewById(R.id.activity_payment_webview);
         // Enable Javascript
         WebSettings webSettings = mWebView.getSettings();
@@ -48,35 +52,17 @@ public class PaymentActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new MyWebViewClient());
         webSettings.setDomStorageEnabled(true);
         mWebView.addJavascriptInterface(new FormDataInterface(), "FORMOUT");
-//        double price=0;
-        String price="2000";
-        Intent intentData = getIntent();
-//         price = intentData.getDoubleExtra("price",300000);
-        System.out.println("AhmadLogs: price_before : " +price);
-
-//        String[] values = price.split("\\.");
-//        price = values[0];
-//        price = price + "00";
-        System.out.println("AhmadLogs: price : " +price);
-
         Date Date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddkkmmss");
         String DateString = dateFormat.format(Date);
-        System.out.println("AhmadLogs: DateString : " +DateString);
-
         // Convert Date to Calendar
         Calendar c = Calendar.getInstance();
         c.setTime(Date);
         c.add(Calendar.HOUR, 1);
-
         // Convert calendar back to Date
         Date currentDateHourPlusOne = c.getTime();
         String expiryDateString = dateFormat.format(currentDateHourPlusOne);
-        System.out.println("AhmadLogs: expiryDateString : " +expiryDateString);
-
         String TransactionIdString = "T" + DateString;
-        System.out.println("AhmadLogs: TransactionIdString : " +TransactionIdString);
-
         String pp_MerchantID = Jazz_MerchantID;
         String pp_Password = Jazz_Password;
         String IntegritySalt = Jazz_IntegritySalt;
@@ -100,10 +86,6 @@ public class PaymentActivity extends AppCompatActivity {
         String pp_mpf_3 = "3";
         String pp_mpf_4 = "4";
         String pp_mpf_5 = "5";
-
-        //sortedString = "cwu55225t6&1000&TBANK&billRef&Description of transaction&EN&MC10487&z740xw7fu0&RETL&http://localhost/jazzcash_part_3/order_placed.php&PKR&20201223202501&20201223212501&T20201223202501&1.1&1&2&3&4&5";
-        //pp_SecureHash = php_hash_hmac(sortedString, IntegritySalt);
-
         String sortedString = "";
         sortedString += IntegritySalt + "&";
         sortedString += pp_Amount + "&";
@@ -115,7 +97,6 @@ public class PaymentActivity extends AppCompatActivity {
         sortedString += pp_Password + "&";
         sortedString += pp_ProductID + "&";
         sortedString += pp_ReturnURL + "&";
-        //sortedString += pp_SubMerchantID + "&";
         sortedString += pp_TxnCurrency + "&";
         sortedString += pp_TxnDateTime + "&";
         sortedString += pp_TxnExpiryDateTime + "&";
@@ -127,11 +108,7 @@ public class PaymentActivity extends AppCompatActivity {
         sortedString += pp_mpf_3 + "&";
         sortedString += pp_mpf_4 + "&";
         sortedString += pp_mpf_5;
-
         pp_SecureHash = php_hash_hmac(sortedString, IntegritySalt);
-        System.out.println("AhmadLogs: sortedString : " +sortedString);
-        System.out.println("AhmadLogs: pp_SecureHash : " +pp_SecureHash);
-
         try {
             postData += URLEncoder.encode("pp_Version", "UTF-8")
                     + "=" + URLEncoder.encode(pp_Version, "UTF-8") + "&";
@@ -182,7 +159,7 @@ public class PaymentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        System.out.println("AhmadLogs: postData : " +postData);
+
 
         mWebView.postUrl("https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/", postData.getBytes());
     }
@@ -206,7 +183,7 @@ public class PaymentActivity extends AppCompatActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if(url.equals(paymentReturnUrl)){
-                System.out.println("AhmadLogs: return url cancelling");
+
                 view.stopLoading();
                 return;
             }
@@ -215,7 +192,7 @@ public class PaymentActivity extends AppCompatActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            //Log.d(DEBUG_TAG, "Url: "+url);
+
             if(url.equals(paymentReturnUrl)){
                 return;
             }
@@ -230,13 +207,13 @@ public class PaymentActivity extends AppCompatActivity {
         public void processFormData(String url, String formData) {
             Intent i = new Intent(PaymentActivity.this, MainActivity.class);
 
-            System.out.println("AhmadLogs: Url:" + url + " form data " + formData);
+
             if (url.equals(paymentReturnUrl)) {
                 String[] values = formData.split("&");
                 for (String pair : values) {
                     String[] nameValue = pair.split("=");
                     if (nameValue.length == 2) {
-                        System.out.println("AhmadLogs: Name:" + nameValue[0] + " value:" + nameValue[1]);
+
                         i.putExtra(nameValue[0], nameValue[1]);
                     }
                 }
