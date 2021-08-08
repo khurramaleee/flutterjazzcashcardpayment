@@ -54,9 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void start() async {
      Map<String,String> data ={
        "price":"400000",
-       "Jazz_MerchantID":"MC12686",
-       "Jazz_Password":"5z932w9sa5",
-       "Jazz_IntegritySalt":"v3s3y665vf",
+       "Jazz_MerchantID":"####",
+       "Jazz_Password":"###",
+       "Jazz_IntegritySalt":"###",
        "paymentReturnUrl":"https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/DoTransaction"
 
      };
