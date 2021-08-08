@@ -100,7 +100,6 @@ public class PaymentActivity extends AppCompatActivity {
         sortedString += pp_TxnCurrency + "&";
         sortedString += pp_TxnDateTime + "&";
         sortedString += pp_TxnExpiryDateTime + "&";
-        //sortedString += pp_TxnType + "&";
         sortedString += pp_TxnRefNo + "&";
         sortedString += pp_Version + "&";
         sortedString += pp_mpf_1 + "&";
@@ -178,12 +177,9 @@ public class PaymentActivity extends AppCompatActivity {
                 "   parseForm(document.forms[i]);"+
                 "};";
 
-        //private static final String DEBUG_TAG = "CustomWebClient";
-
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if(url.equals(paymentReturnUrl)){
-
                 view.stopLoading();
                 return;
             }
